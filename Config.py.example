@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+#
+# Config.py
+#
+
+class AppConfig:
+    loglevel = 0    # 0 = debug, 1 = info, 2 = warning, 3 = error
+
+class NvdApiConfig:
+    apikey = "xxxx-xxxx-xxxx-xxxx"
+
+class Elastic2nagiosConfig:
+    url = "https://elastic2nagios.example.com"
+    apikey = "xxxx-xxxx-xxxx-xxxx"
+
+class AlertStateConfig:
+    path = "/tmp/state.json"
