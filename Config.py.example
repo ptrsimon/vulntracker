@@ -8,6 +8,7 @@ class AppConfig:
 
 class NvdApiConfig:
     apikey = "xxxx-xxxx-xxxx-xxxx"
+    daysnewer = 30
 
 class Elastic2nagiosConfig:
     url = "https://elastic2nagios.example.com"

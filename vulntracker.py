@@ -11,7 +11,14 @@ from Vulnerability import Vulnerability
 from LogHandler import ConsoleLogHandler
 import Config
 import argparse
+import time
+import sys
+import signal
 
+
+def sigint_handler(sig, frame):
+    print('Received SIGINT, exit')
+    sys.exit(0)
 
 def main():
     parser = argparse.ArgumentParser(
@@ -19,6 +26,8 @@ def main():
     parser.add_argument('-a', action='store_true',
                         help="Fetch all CVEs regardless of their published date (default is CVEs newer than 30 days)")
     args = parser.parse_args()
+
+    signal.signal(signal.SIGINT, sigint_handler)
 
     lh = ConsoleLogHandler()
     ah = ApiHandler(Config.NvdApiConfig.apikey, lh)
@@ -38,7 +47,7 @@ def main():
         if args.a:
             resp = ah.GetVulnerabilities(i.cpestring, i.severity)["result"]["CVE_Items"]
         else:
-            resp = ah.GetVulnerabilities(i.cpestring, i.severity, 30)["result"]["CVE_Items"]
+            resp = ah.GetVulnerabilities(i.cpestring, i.severity, Config.NvdApiConfig.daysnewer)["result"]["CVE_Items"]
         for j in resp:
             vuln = Vulnerability(j["cve"]["CVE_data_meta"]["ID"],
                                  i.cpestring, i.severity,
@@ -46,9 +55,11 @@ def main():
             for k in j["configurations"]["nodes"]:
                 vuln.ParseAffectedVersions(k["cpe_match"])
             vulns.append(vuln)
+        time.sleep(1)
 
     for i in vulns:
         alh.Send(i)
+        time.sleep(1)
 
     return 0
 

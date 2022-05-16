@@ -5,7 +5,6 @@
 
 import LogHandler
 import json
-import sys
 
 
 class AlertStateHandler:
@@ -32,6 +31,6 @@ class AlertStateHandler:
             with open(self.statefile, 'r') as fh:
                 state = json.load(fh)
         except Exception as e:
-            self.lh.Write("Failed to open state database: " + str(e) + ". Assuming empty state.", 0)
+            self.lh.Write("Failed to open state database: " + str(e) + ". Assuming empty state.", 1)
 
         return cveid in state

@@ -57,7 +57,7 @@ class Elastic2nagiosAlertHandler(AlertHandler):
 
         r = requests.post(self.elastic2nagios_url + "/create", data=payload, headers=headers)
         if r.status_code != 200:
-            self.lh.Write("Failed to send alert to elastic2nagios: status code" + str(r.status_code))
+            self.lh.Write("Failed to send alert to elastic2nagios: status code " + str(r.status_code), 3)
             sys.exit(1)
 
         self.AddToState(vulnerability.cveid)
