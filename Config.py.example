@@ -16,3 +16,6 @@ class Elastic2nagiosConfig:
 
 class AlertStateConfig:
     path = "/tmp/state.json"
+
+class FileLoggerConfig:
+    path = "/tmp/vulntracker.log"

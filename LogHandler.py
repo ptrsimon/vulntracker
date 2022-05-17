@@ -22,3 +22,12 @@ class ConsoleLogHandler(LogHandler):
     def Write(self, msg, level):
         if level >= Config.AppConfig.loglevel:
             print("[{0}] {1}".format(self.loglevels[level], msg))
+
+class FileLogHandler(LogHandler):
+    def __init__(self, path):
+        self.path = path
+
+    def Write(self, msg, level):
+        if level >= Config.AppConfig.loglevel:
+            with open(self.path, 'a') as fh:
+                fh.write("[{0}] {1}\n".format(self.loglevels[level], msg))

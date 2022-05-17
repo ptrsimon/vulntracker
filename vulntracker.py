@@ -9,6 +9,7 @@ from AlertStateHandler import AlertStateHandler
 from InventoryHandler import InventoryHandler
 from Vulnerability import Vulnerability
 from LogHandler import ConsoleLogHandler
+from LogHandler import FileLogHandler
 import Config
 import argparse
 import time
@@ -29,7 +30,11 @@ def main():
 
     signal.signal(signal.SIGINT, sigint_handler)
 
-    lh = ConsoleLogHandler()
+    try:
+        lh = FileLogHandler(Config.FileLoggerConfig.path)
+    except (NameError, AttributeError):
+        lh = ConsoleLogHandler()
+
     ah = ApiHandler(Config.NvdApiConfig.apikey, lh)
     ih = InventoryHandler("inventory.yml")
     alh = Elastic2nagiosAlertHandler(Config.Elastic2nagiosConfig.url, lh, Config.Elastic2nagiosConfig.apikey)
