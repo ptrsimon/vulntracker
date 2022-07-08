@@ -3,7 +3,7 @@
 # InventoryHandler.py - parse and return inventory file (interesting software is defined here)
 #
 
-from InventoryItem import InventoryItem
+from InventoryItem import CPEInventoryItem, KeywordInventoryItem
 import yaml
 
 class InventoryHandler:
@@ -14,6 +14,9 @@ class InventoryHandler:
         items = []
         with open(self.path, 'r') as fh:
             for i in yaml.load(fh, Loader=yaml.FullLoader):
-                for j in i["severities"]:
-                    items.append(InventoryItem(i["cpestring"], j, i["human_name"]))
+                if "severities" in i and "cpestring" in i:
+                    for j in i["severities"]:
+                        items.append(CPEInventoryItem(i["cpestring"], j, i["human_name"]))
+                elif "keyword" in i:
+                    items.append(KeywordInventoryItem(i["keyword"], i["human_name"]))
             return items

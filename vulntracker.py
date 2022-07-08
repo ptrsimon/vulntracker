@@ -7,6 +7,7 @@ from ApiHandler import ApiHandler
 from AlertHandler import Elastic2nagiosAlertHandler
 from AlertStateHandler import AlertStateHandler
 from InventoryHandler import InventoryHandler
+from InventoryItem import CPEInventoryItem, KeywordInventoryItem
 from Vulnerability import Vulnerability
 from LogHandler import ConsoleLogHandler
 from LogHandler import FileLogHandler
@@ -50,15 +51,23 @@ def main():
 
     for i in inv:
         if args.a:
-            resp = ah.GetVulnerabilities(i.cpestring, i.severity)["result"]["CVE_Items"]
+            resp = ah.GetVulnerabilities(i)["result"]["CVE_Items"]
         else:
-            resp = ah.GetVulnerabilities(i.cpestring, i.severity, Config.NvdApiConfig.daysnewer)["result"]["CVE_Items"]
+            resp = ah.GetVulnerabilities(i, Config.NvdApiConfig.daysnewer)["result"]["CVE_Items"]
         for j in resp:
-            vuln = Vulnerability(j["cve"]["CVE_data_meta"]["ID"],
-                                 i.cpestring, i.severity,
-                                 j["cve"]["description"]["description_data"][0]["value"], i.human_name)
-            for k in j["configurations"]["nodes"]:
-                vuln.ParseAffectedVersions(k["cpe_match"])
+            if isinstance(i, CPEInventoryItem):
+                vuln = Vulnerability(j["cve"]["CVE_data_meta"]["ID"],
+                                     i.cpestring, i.severity,
+                                     j["cve"]["description"]["description_data"][0]["value"], i.human_name)
+                for k in j["configurations"]["nodes"]:
+                    vuln.ParseAffectedVersions(k["cpe_match"])
+            elif isinstance(i, KeywordInventoryItem):
+                vuln = Vulnerability(j["cve"]["CVE_data_meta"]["ID"],
+                                     "unknown", "unknown",
+                                     j["cve"]["description"]["description_data"][0]["value"], i.human_name)
+            else:
+                lh.Write("Unsupported inventory item type: " + str(type(i)) + ", exit", 3)
+                sys.exit(1)
             vulns.append(vuln)
         time.sleep(1)
 
