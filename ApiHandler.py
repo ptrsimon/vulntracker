@@ -43,8 +43,8 @@ class ApiHandler:
                              },
                              timeout=60)
         if r.status_code != 200:
-            self.lh.Write("Failed to fetch vulnerabilities for " + cpestring + ": status code "
-                          + str(r.status_code), 3)
+            self.lh.Write("Failed to fetch vulnerabilities for " + cpestring + ": status="
+                          + str(r.status_code) + " respurl=" + r.url, 3)
             sys.exit(1)
         return json.loads(r.text)
 
@@ -69,8 +69,8 @@ class ApiHandler:
                              },
                              timeout=60)
         if r.status_code != 200:
-            self.lh.Write("Failed to fetch vulnerabilities for keyword " + keyword + ": status code "
-                          + str(r.status_code), 3)
+            self.lh.Write("Failed to fetch vulnerabilities for keyword " + keyword + ": status="
+                          + str(r.status_code) + " respurl=" + r.url, 3)
             sys.exit(1)
         return json.loads(r.text)
 
